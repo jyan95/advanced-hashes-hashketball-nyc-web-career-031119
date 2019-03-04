@@ -117,11 +117,11 @@ end
 
 def num_points_scored(player)
   game_hash.each {
-    |team,data|
-    data.each {
-      |attribute,detail|
-      if detail.include?(player)
-        return game_hash[team][attribute][player][:points]
+    |team,team_hash|
+    team_hash[:players].each {
+      |name, stats_hash|
+      if name == player
+        return stats_hash[:points]
       end
     }
   }
@@ -129,11 +129,11 @@ end
 
 def shoe_size(player)
   game_hash.each {
-    |team,data|
-    data.each {
-      |attribute,detail|
-      if detail.include?(player)
-        return game_hash[team][attribute][player][:shoe]
+    |team,team_hash|
+    team_hash[:players].each {
+      |name, stats_hash|
+      if name == player
+        return stats_hash[:shoe]
       end
     }
   }
@@ -141,20 +141,17 @@ end
 
 def team_colors(team_name)
   game_hash.each {
-    |team,data|
-    data.each {
-      |attribute,detail|
-      if detail.include?(team_name)
-        return game_hash[team][:colors]
-      end
-    }
+    |team,team_hash|
+    if team_hash[:team_name] == team_name
+      return team_hash[:colors]
+    end
   }
 end
 
 def team_names
   names = []
   game_hash.each {
-    |team,data|
+    |team,team_hash|
     names.push(game_hash[team][:team_name])
   }
   names
@@ -163,10 +160,10 @@ end
 def player_numbers(team_name)
   numbers = []
   game_hash.each {
-    |team,data|
-    if data[:team_name] == team_name
-      data[:players].each {
-        |name,stats| stats.each {
+    |team,team_hash|
+    if team_hash[:team_name] == team_name
+      team_hash[:players].each {
+        |name,stats_hash| stats_hash.each {
           |k,v|
           if k == :number
             numbers.push(v)
@@ -179,31 +176,80 @@ def player_numbers(team_name)
 end
 
 def player_stats(player)
-  stats_hash = {}
   game_hash.each {
-    |team,data|
-    data[:players].each {
-      |name,stats| if name == player
-        stats.delete(:name)
-        stats_hash = stats
+    |team,team_hash|
+    team_hash[:players].each {
+      |name,stats_hash| if name == player
+        return stats_hash
       end
     }
   }
-  stats_hash
 end
 
 def big_shoe_rebounds
   biggest = 0
   rebounds = 0
   game_hash.each {
-    |team,data|
-    data[:players].each {
-      |k,v|
-      if v[:shoe] > biggest
-        biggest = v[:shoe]
-        rebounds = v[:rebounds]
+    |team,team_hash|
+    team_hash[:players].each {
+      |name,stats_hash|
+      if stats_hash[:shoe] > biggest
+        biggest = stats_hash[:shoe]
+        rebounds = stats_hash[:rebounds]
       end
     }
   }
   rebounds
 end
+
+def most_points_scored
+  most = 0
+  game_hash.each{
+    |team,team_hash|
+    team_hash[:players].each{
+      |name,stats_hash|
+      if stats_hash[:points] > most
+        most = stats_hash[:points]
+      end
+     }
+  }
+  game_hash.each{
+    |team,team_hash|
+    team_hash[:players].each{
+      |name,stats_hash|
+      if stats_hash[:points] == most
+        return name
+      end
+     }
+  }
+end
+
+def winning_team
+  points_array = []
+  game_hash.each{
+    |team,team_hash|
+    team_hash[:players].each{
+      |name,stats_hash|
+      points_array.push(stats_hash[:points])
+     }
+  }
+  team1 = points_array.slice(0,5)
+  team2 = points_array.slice(5,5)
+  sum1 = 0
+  team1.each { |i| sum1 += i }
+  sum2 = 0
+  team2.each { |j| sum2 += j }
+  names = [] #tried calling previously defined method "team_names"
+  game_hash.each {
+    |team,team_hash|
+    names.push(game_hash[team][:team_name])
+  }
+  if sum1 > sum2
+    return names[0]
+  elsif sum2 > sum1
+    return name[1]
+  end
+end
+
+def player_with_longest_name
+  player_names = []

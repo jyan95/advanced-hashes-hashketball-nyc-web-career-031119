@@ -253,3 +253,27 @@ end
 
 def player_with_longest_name
   player_names = []
+  game_hash.each {
+    |team,team_hash|
+    team_hash[:players].each {
+      |name,stats_hash|
+      player_names << name
+    }
+  }
+  longest = 0
+  player_names.each {
+    |name|
+    if name.length > longest
+      longest = name.length
+    end
+  }
+  game_hash.each {
+    |team,team_hash|
+    team_hash[:players].each {
+      |name,stats_hash|
+      if name.length == longest
+        return name
+      end
+    }
+  }
+end

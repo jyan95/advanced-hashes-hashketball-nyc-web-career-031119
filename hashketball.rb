@@ -157,12 +157,10 @@ def team_colors(team_name)
 end
 
 def team_names
-  names = []
-  game_hash.each {
+  game_hash.map {
     |team,team_hash|
-    names.push(game_hash[team][:team_name])
+    game_hash[team][:team_name]
   }
-  names
 end
 
 def player_numbers(team_name)

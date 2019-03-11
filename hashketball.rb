@@ -115,28 +115,36 @@ def game_hash
   }
 end
 
+# def num_points_scored(player)
+#   game_hash.each {
+#     |team,team_hash|
+#     team_hash[:players].each {
+#       |name, stats_hash|
+#       if name == player
+#         return stats_hash[:points]
+#       end
+#     }
+#   }
+# end
+
 def num_points_scored(player)
-  game_hash.each {
-    |team,team_hash|
-    team_hash[:players].each {
-      |name, stats_hash|
-      if name == player
-        return stats_hash[:points]
-      end
-    }
-  }
+  player_stats(player)[:points]
 end
 
+# def shoe_size(player)
+#   game_hash.each {
+#     |team,team_hash|
+#     team_hash[:players].each {
+#       |name, stats_hash|
+#       if name == player
+#         return stats_hash[:shoe]
+#       end
+#     }
+#   }
+# end
+
 def shoe_size(player)
-  game_hash.each {
-    |team,team_hash|
-    team_hash[:players].each {
-      |name, stats_hash|
-      if name == player
-        return stats_hash[:shoe]
-      end
-    }
-  }
+  player_stats(player)[:shoe]
 end
 
 def team_colors(team_name)
@@ -239,15 +247,10 @@ def winning_team
   team1.each { |i| sum1 += i }
   sum2 = 0
   team2.each { |j| sum2 += j }
-  names = [] #tried calling previously defined method "team_names"
-  game_hash.each {
-    |team,team_hash|
-    names.push(game_hash[team][:team_name])
-  }
   if sum1 > sum2
-    return names[0]
+    return team_names[0]
   elsif sum2 > sum1
-    return name[1]
+    return team_names[1]
   end
 end
 
